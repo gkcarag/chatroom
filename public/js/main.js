@@ -16,6 +16,7 @@ socket.emit('joinRoom', { username, room });
 
 // get room users
 socket.on('roomUsers', ({ room, users }) => {
+    //add room name and list of users to the page
     outputRoomName(room);
     outputUsers(users);
 });
