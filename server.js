@@ -30,10 +30,7 @@ io.on('connect', socket => {
             .to(user.room)
             .emit('message', formatMessage(botName,`${user.username} has joined the chat`));
 
-        io.to(user.room).emit('roomUsers', {
-            room: user.room,
-            users: getRoomUsers(user.room)
-        });
+        updateRoomUsers(user);
     })
 
     
@@ -46,22 +43,22 @@ io.on('connect', socket => {
 
     //runs when client disconnects
     socket.on('disconnect', () => {
-        console.log(socket.id);
         const user = userLeave(socket.id);
 
         if(user) {
             io.to(user.room).emit('message', formatMessage(botName, `${user.username} has left the chat`));
-            io.to(user.room).emit('roomUsers', {
-                room: user.room,
-                users: getRoomUsers(user.room)
-            });
-        }
+            updateRoomUsers(user);
+       }
     });
 });
-
-
-
 
 const PORT  = 3000 || process.env.PORT;
 
 server.listen(PORT, ()=> console.log(`Secrver running on port ${PORT}`));
+
+function updateRoomUsers(user) {
+    io.to(user.room).emit('roomUsers', {
+        room: user.room,
+        users: getRoomUsers(user.room)
+    });
+};
